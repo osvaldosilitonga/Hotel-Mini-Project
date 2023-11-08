@@ -43,8 +43,8 @@ func main() {
 	userController := controller.NewUserController(db)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.GET("/login", userController.LoginUser)
-	e.GET("/register", userController.RegisterUser)
+	e.POST("/login", userController.LoginUser)
+	e.POST("/register", userController.RegisterUser)
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("LOCAL_PORT")))
 }

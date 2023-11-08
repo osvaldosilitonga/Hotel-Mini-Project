@@ -11,7 +11,7 @@ import (
 func InitDB() *gorm.DB {
 	dsn := os.Getenv("DB_PG_STRING")
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{TranslateError: true})
 	if err != nil {
 		log.Fatal("Can't connect to DB")
 	}
