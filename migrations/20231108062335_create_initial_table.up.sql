@@ -9,7 +9,7 @@ CREATE TABLE users(
 CREATE TABLE rooms(
   id SERIAL PRIMARY KEY,
   category VARCHAR(50) NOT NULL,
-  room_number INT NOT NULL,
+  room_number VARCHAR NOT NULL,
   status VARCHAR(50) NOT NULL DEFAULT 'ready',
   price INT NOT NULL
 );
