@@ -1,0 +1,15 @@
+basePath: /v1
+host: localhost:8080
+info:
+  contact:
+    email: osvaldosilitonga@gmail.com
+    name: Osvaldo Silitonga
+    url: https://github.com/osvaldosilitonga
+  description: Mini project Hotel API (FTGO-P2)
+  title: Hotel API (Mini Project)
+  version: 1.0.0
+paths: {}
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

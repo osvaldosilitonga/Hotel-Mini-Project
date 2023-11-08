@@ -1,0 +1,21 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Mini project Hotel API (FTGO-P2)",
+        "title": "Hotel API (Mini Project)",
+        "contact": {
+            "name": "Osvaldo Silitonga",
+            "url": "https://github.com/osvaldosilitonga",
+            "email": "osvaldosilitonga@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/v1",
+    "paths": {},
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}
