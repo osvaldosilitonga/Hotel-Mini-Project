@@ -22,3 +22,15 @@ func (controller User) Test(c echo.Context) error {
 		"message": "OK",
 	})
 }
+
+func (controller User) LoginUser(c echo.Context) error {
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "OK",
+	})
+}
+
+func (controller User) RegisterUser(c echo.Context) error {
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "OK",
+	})
+}

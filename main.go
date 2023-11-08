@@ -44,6 +44,8 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.GET("/test", userController.Test)
+	e.GET("/user/login", userController.LoginUser)
+	e.GET("/user/register", userController.RegisterUser)
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("LOCAL_PORT")))
 }
