@@ -7,7 +7,7 @@ type Payments struct {
 	OrderID   int
 	Method    string
 	Amount    int
-	status    string
+	Status    string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

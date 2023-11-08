@@ -1,5 +1,12 @@
 basePath: /v1
 definitions:
+  dto.CreateOrderResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.NewOrder'
+      message:
+        type: string
+    type: object
   dto.LoginBody:
     properties:
       email:
@@ -17,6 +24,48 @@ definitions:
       message:
         type: string
     type: object
+  dto.NewOrder:
+    properties:
+      adult:
+        type: integer
+      amount:
+        type: integer
+      check_in:
+        type: string
+      check_out:
+        type: string
+      child:
+        type: integer
+      created_at:
+        type: string
+      order_id:
+        type: integer
+      room_id:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.OrderBody:
+    properties:
+      adult:
+        minimum: 1
+        type: integer
+      check_in:
+        type: string
+      check_out:
+        type: string
+      child:
+        type: integer
+      room_id:
+        type: integer
+    required:
+    - adult
+    - check_in
+    - check_out
+    - room_id
+    type: object
   dto.RegisterBody:
     properties:
       email:
@@ -32,9 +81,41 @@ definitions:
     type: object
   dto.RegisterResponse:
     properties:
-      data: {}
+      data:
+        $ref: '#/definitions/entity.Users'
       message:
         type: string
+    type: object
+  dto.RoomsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entity.Rooms'
+        type: array
+      message:
+        type: string
+    type: object
+  entity.Rooms:
+    properties:
+      category:
+        type: string
+      id:
+        type: integer
+      price:
+        type: integer
+      room_number:
+        type: integer
+    type: object
+  entity.Users:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      saldo:
+        type: integer
     type: object
   helpers.APIError:
     properties:
@@ -116,6 +197,68 @@ paths:
           schema:
             $ref: '#/definitions/helpers.APIError'
       summary: Register
+      tags:
+      - User
+  /rooms:
+    get:
+      consumes:
+      - application/json
+      description: get all available room
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoomsResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Get Rooms
+      tags:
+      - User
+  /user/orders:
+    post:
+      consumes:
+      - application/json
+      description: create new order by giving order information in request body
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Order Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Create Order
       tags:
       - User
 securityDefinitions:

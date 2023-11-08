@@ -12,8 +12,8 @@ type Users struct {
 
 type Orders struct {
 	ID        uint
-	UserID    int
-	RoomID    int
+	UserID    uint
+	RoomID    uint
 	Adult     int
 	Child     int
 	CheckIn   time.Time

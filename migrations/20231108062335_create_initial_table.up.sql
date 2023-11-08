@@ -23,8 +23,8 @@ CREATE TABLE orders(
   check_in DATE NOT NULL,
   check_out DATE NOT NULL,
   status VARCHAR NOT NULL,
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (room_id) REFERENCES rooms(id)
 );

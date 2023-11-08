@@ -3,9 +3,11 @@ package controller
 import (
 	"errors"
 	"hotel/dto"
+	"hotel/entity"
 	"hotel/helpers"
 	"hotel/repository"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -104,7 +106,131 @@ func (controller User) RegisterUser(c echo.Context) error {
 
 	response := dto.RegisterResponse{
 		Message: "register success",
-		Data:    user,
+		Data:    &user,
 	}
 	return c.JSON(http.StatusCreated, response)
+}
+
+// GetRooms godoc
+// @Summary      Get Rooms
+// @Description  get all available room
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  dto.RoomsResponse
+// @Failure      404  {object}  helpers.APIError
+// @Failure      500  {object}  helpers.APIError
+// @Router       /rooms [get]
+func (controller User) GetRooms(c echo.Context) error {
+	rooms, err := repository.GetRooms(controller.DB)
+	if len(*rooms) < 1 {
+		return helpers.ErrorMessage(c, &helpers.ErrNotFound, "no room available")
+	}
+	if err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, err.Error())
+	}
+
+	response := dto.RoomsResponse{
+		Message: "OK",
+		Data:    *rooms,
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+// CreateOrder godoc
+// @Summary      Create Order
+// @Description  create new order by giving order information in request body
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "JWT Token"
+// @Param        request   body      dto.OrderBody  true  "Order Data"
+// @Success      201  {object}  dto.CreateOrderResponse
+// @Failure      400  {object}  helpers.APIError
+// @Failure      404  {object}  helpers.APIError
+// @Failure      500  {object}  helpers.APIError
+// @Router       /user/orders [post]
+func (controller User) CreateOrder(c echo.Context) error {
+	userID := c.Get("id").(uint)
+	body := dto.OrderBody{}
+
+	c.Bind(&body)
+	if err := c.Validate(&body); err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, err.Error())
+	}
+
+	checkIn, err := time.Parse("2006-01-02", body.CheckIn)
+	if err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, "invalid check_in date format (YYYY-MM-DD)")
+	}
+	checkOut, err := time.Parse("2006-01-02", body.CheckOut)
+	if err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, "invalid check_out date format (YYYY-MM-DD)")
+	}
+
+	days := checkOut.Sub(checkIn).Hours() / 24
+
+	tx := controller.DB.Begin()
+
+	room, err := repository.GetRoomById(body.RoomID, tx)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		tx.Rollback()
+		return helpers.ErrorMessage(c, &helpers.ErrNotFound, "room not found")
+	}
+	if err != nil {
+		tx.Rollback()
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, err.Error())
+	}
+
+	if room.Status != "ready" {
+		tx.Rollback()
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, "room not available")
+	}
+
+	_, err = repository.GetOrdersByDateRange(room.ID, body.CheckIn, body.CheckOut, tx)
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		tx.Rollback()
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, "room not available")
+	}
+
+	newOrder := entity.Orders{
+		UserID:   userID,
+		RoomID:   room.ID,
+		Adult:    body.Adult,
+		Child:    body.Child,
+		CheckIn:  checkIn,
+		CheckOut: checkOut,
+		Status:   "booked",
+		Payments: entity.Payments{
+			Amount: room.Price * int(days),
+			Status: "unpaid",
+		},
+	}
+
+	order, err := repository.CreateOrder(newOrder, tx)
+	if err != nil {
+		tx.Rollback()
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, err.Error())
+	}
+
+	tx.Commit()
+
+	data := dto.NewOrder{
+		ID:        order.ID,
+		RoomID:    order.RoomID,
+		Adult:     order.Adult,
+		Child:     order.Child,
+		CheckIn:   order.CheckIn,
+		CheckOut:  order.CheckOut,
+		Status:    order.Status,
+		Amount:    order.Payments.Amount,
+		CreatedAt: order.CreatedAt,
+		UpdatedAt: order.UpdatedAt,
+	}
+
+	return c.JSON(http.StatusCreated, dto.CreateOrderResponse{
+		Message: "create order success",
+		Data:    data,
+	})
 }

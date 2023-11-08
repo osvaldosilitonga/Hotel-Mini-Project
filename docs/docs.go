@@ -116,9 +116,114 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/rooms": {
+            "get": {
+                "description": "get all available room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Rooms",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RoomsResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/orders": {
+            "post": {
+                "description": "create new order by giving order information in request body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Order Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrderBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dto.CreateOrderResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.NewOrder"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.LoginBody": {
             "type": "object",
             "required": [
@@ -145,6 +250,68 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.NewOrder": {
+            "type": "object",
+            "properties": {
+                "adult": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "integer"
+                },
+                "check_in": {
+                    "type": "string"
+                },
+                "check_out": {
+                    "type": "string"
+                },
+                "child": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrderBody": {
+            "type": "object",
+            "required": [
+                "adult",
+                "check_in",
+                "check_out",
+                "room_id"
+            ],
+            "properties": {
+                "adult": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "check_in": {
+                    "type": "string"
+                },
+                "check_out": {
+                    "type": "string"
+                },
+                "child": {
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.RegisterBody": {
             "type": "object",
             "required": [
@@ -167,9 +334,59 @@ const docTemplate = `{
         "dto.RegisterResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "data": {
+                    "$ref": "#/definitions/entity.Users"
+                },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.RoomsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Rooms"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Rooms": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "room_number": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.Users": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "saldo": {
+                    "type": "integer"
                 }
             }
         },

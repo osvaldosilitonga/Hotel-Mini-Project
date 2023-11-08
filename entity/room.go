@@ -1,9 +1,9 @@
 package entity
 
 type Rooms struct {
-	ID         uint
-	Category   string
-	RoomNumber int
-	Status     string
-	Price      int
+	ID         uint   `json:"id"`
+	Category   string `json:"category"`
+	RoomNumber int    `json:"room_number"`
+	Status     string `json:"-"`
+	Price      int    `json:"price"`
 }

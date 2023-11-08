@@ -5,7 +5,6 @@ import (
 	"hotel/controller"
 	"hotel/initializers"
 	"hotel/middlewares"
-	"net/http"
 	"os"
 
 	_ "hotel/docs"
@@ -50,15 +49,12 @@ func main() {
 	{
 		v1.POST("/login", userController.LoginUser)
 		v1.POST("/register", userController.RegisterUser)
+		v1.GET("/rooms", userController.GetRooms)
 	}
 	user := v1.Group("/user")
 	user.Use(authMiddleware.RequiredAuth)
 	{
-		user.GET("", func(c echo.Context) error {
-			return c.JSON(http.StatusOK, echo.Map{
-				"message": "OK",
-			})
-		})
+		user.POST("/orders", userController.CreateOrder)
 	}
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("LOCAL_PORT")))
