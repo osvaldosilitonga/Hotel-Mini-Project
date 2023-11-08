@@ -67,6 +67,17 @@ func (controller User) LoginUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+// RegisterUser godoc
+// @Summary      Register
+// @Description  register by giving user information in request body
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        request   body      dto.RegisterBody  true  "User Data"
+// @Success      201  {object}  dto.RegisterResponse
+// @Failure      400  {object}  helpers.APIError
+// @Failure      500  {object}  helpers.APIError
+// @Router       /register [post]
 func (controller User) RegisterUser(c echo.Context) error {
 	body := dto.RegisterBody{}
 
@@ -95,5 +106,5 @@ func (controller User) RegisterUser(c echo.Context) error {
 		Message: "register success",
 		Data:    user,
 	}
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusCreated, response)
 }

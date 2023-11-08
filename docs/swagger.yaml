@@ -17,6 +17,25 @@ definitions:
       message:
         type: string
     type: object
+  dto.RegisterBody:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  dto.RegisterResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+    type: object
   helpers.APIError:
     properties:
       code:
@@ -67,6 +86,36 @@ paths:
           schema:
             $ref: '#/definitions/helpers.APIError'
       summary: Login
+      tags:
+      - User
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: register by giving user information in request body
+      parameters:
+      - description: User Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Register
       tags:
       - User
 securityDefinitions:
