@@ -1,1 +1,1 @@
-# Hotel-Mini-Project
+# Hotel - Mini Project
