@@ -5,6 +5,7 @@ import (
 	"hotel/controller"
 	"hotel/initializers"
 	"hotel/middlewares"
+	"net/http"
 	"os"
 
 	_ "hotel/docs"
@@ -40,13 +41,24 @@ func main() {
 
 	db := config.InitDB()
 
+	authMiddleware := middlewares.NewAuthMiddleware(db)
 	userController := controller.NewUserController(db)
+
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	v1 := e.Group("/v1")
 	{
 		v1.POST("/login", userController.LoginUser)
 		v1.POST("/register", userController.RegisterUser)
+	}
+	user := v1.Group("/user")
+	user.Use(authMiddleware.RequiredAuth)
+	{
+		user.GET("", func(c echo.Context) error {
+			return c.JSON(http.StatusOK, echo.Map{
+				"message": "OK",
+			})
+		})
 	}
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("LOCAL_PORT")))

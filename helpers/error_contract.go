@@ -14,6 +14,10 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "bad request",
 	}
+	ErrUnauthorized = APIError{
+		Code:    http.StatusUnauthorized,
+		Message: "unauthorized",
+	}
 	ErrNotFound = APIError{
 		Code:    http.StatusNotFound,
 		Message: "not found",
