@@ -20,3 +20,13 @@ func RegisterUser(body *dto.RegisterBody, db *gorm.DB) (*entity.Users, error) {
 
 	return &user, nil
 }
+
+func GetUser(email string, db *gorm.DB) (*entity.Users, error) {
+	user := entity.Users{}
+
+	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+		return &user, err
+	}
+
+	return &user, nil
+}

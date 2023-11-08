@@ -1,4 +1,30 @@
 basePath: /v1
+definitions:
+  dto.LoginBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      message:
+        type: string
+    type: object
+  helpers.APIError:
+    properties:
+      code:
+        type: integer
+      detail: {}
+      message:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -7,8 +33,42 @@ info:
     url: https://github.com/osvaldosilitonga
   description: Mini project Hotel API (FTGO-P2)
   title: Hotel API (Mini Project)
-  version: 1.0.0
-paths: {}
+  version: BETA
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login by giving user credential in request body
+      parameters:
+      - description: User Credential
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Login
+      tags:
+      - User
 securityDefinitions:
   BasicAuth:
     type: basic

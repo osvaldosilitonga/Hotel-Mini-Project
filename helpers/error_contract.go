@@ -14,6 +14,10 @@ var (
 		Code:    http.StatusBadRequest,
 		Message: "bad request",
 	}
+	ErrNotFound = APIError{
+		Code:    http.StatusNotFound,
+		Message: "not found",
+	}
 
 	// 500
 	ErrInternalServer = APIError{

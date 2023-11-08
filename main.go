@@ -16,7 +16,7 @@ import (
 )
 
 // @title Hotel API (Mini Project)
-// @version 1.0.0
+// @version BETA
 // @description Mini project Hotel API (FTGO-P2)
 
 // @contact.name Osvaldo Silitonga
