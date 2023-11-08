@@ -17,12 +17,6 @@ func NewUserController(db *gorm.DB) User {
 	}
 }
 
-func (controller User) Test(c echo.Context) error {
-	return c.JSON(http.StatusOK, echo.Map{
-		"message": "OK",
-	})
-}
-
 func (controller User) LoginUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "OK",
