@@ -22,6 +22,9 @@ type OrderBody struct {
 	CheckIn  string `json:"check_in" validate:"required"`
 	CheckOut string `json:"check_out" validate:"required"`
 }
+type TopUpBody struct {
+	Nominal int `json:"nominal" validate:"required,min=50000"`
+}
 
 // --------- RESPONSE BODY -----------
 type RegisterResponse struct {
@@ -47,6 +50,14 @@ type UserOrderByIdResponse struct {
 type CancelOrderResponse struct {
 	Message string    `json:"message"`
 	Data    OrderData `json:"data"`
+}
+type OrderHistoryResponse struct {
+	Message string      `json:"message"`
+	Data    []OrderData `json:"data"`
+}
+type TopUpResponse struct {
+	Message string       `json:"message"`
+	Data    entity.Users `json:"data"`
 }
 
 // New Data Format

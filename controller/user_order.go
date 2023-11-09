@@ -75,7 +75,7 @@ func (controller User) GetUserOrderById(c echo.Context) error {
 // @Failure      401  {object}  helpers.APIError
 // @Failure      404  {object}  helpers.APIError
 // @Failure      500  {object}  helpers.APIError
-// @Router       /user/orders/:id [get]
+// @Router       /user/orders/cancel/:id [put]
 func (controller User) CancelUserOrder(c echo.Context) error {
 	userId := c.Get("id")
 
@@ -111,6 +111,54 @@ func (controller User) CancelUserOrder(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, dto.CancelOrderResponse{
 		Message: "cancel success",
+		Data:    data,
+	})
+}
+
+// GetOrderHistory godoc
+// @Summary      Order History
+// @Description  get all user order history
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "JWT Token"
+// @Success      200  {object}  dto.OrderHistoryResponse
+// @Failure      401  {object}  helpers.APIError
+// @Failure      404  {object}  helpers.APIError
+// @Failure      500  {object}  helpers.APIError
+// @Router       /user/orders/history [get]
+func (controller User) GetOrderHistory(c echo.Context) error {
+	userId := c.Get("id")
+
+	orders, err := repository.GetOrderHistory(userId.(uint), controller.DB)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return helpers.ErrorMessage(c, &helpers.ErrNotFound, "empty data")
+	}
+	if err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, err)
+	}
+
+	data := []dto.OrderData{}
+
+	for _, v := range orders {
+		d := dto.OrderData{
+			ID:        v.ID,
+			RoomID:    v.RoomID,
+			Adult:     v.Adult,
+			Child:     v.Child,
+			CheckIn:   v.CheckIn,
+			CheckOut:  v.CheckOut,
+			Status:    v.Status,
+			Amount:    v.Payments.Amount,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		}
+
+		data = append(data, d)
+	}
+
+	return c.JSON(http.StatusOK, dto.OrderHistoryResponse{
+		Message: "ok",
 		Data:    data,
 	})
 }

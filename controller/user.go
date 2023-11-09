@@ -234,3 +234,38 @@ func (controller User) CreateOrder(c echo.Context) error {
 		Data:    data,
 	})
 }
+
+// TopupBalance godoc
+// @Summary      Top Up Balance
+// @Description  top up balance by giving nominal in request body
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "JWT Token"
+// @Param        request   body      dto.TopUpBody  true  "Top Up Nominal"
+// @Success      200  {object}  dto.TopUpResponse
+// @Failure      400  {object}  helpers.APIError
+// @Failure      404  {object}  helpers.APIError
+// @Failure      500  {object}  helpers.APIError
+// @Router       /user/payments/topup [put]
+func (controller User) UserTopUp(c echo.Context) error {
+	userId := c.Get("id")
+
+	body := dto.TopUpBody{}
+	c.Bind(&body)
+	if err := c.Validate(&body); err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, err.Error())
+	}
+
+	user, res := repository.TopUpSaldo(userId.(uint), body.Nominal, controller.DB)
+	if res.Error != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, res.Error.Error())
+	}
+
+	response := dto.TopUpResponse{
+		Message: "top up success",
+		Data:    *user,
+	}
+
+	return c.JSON(http.StatusOK, response)
+}

@@ -84,3 +84,25 @@ func CancelUserOrder(userId uint, orderId int, db *gorm.DB) (*entity.Orders, *go
 
 	return &order, result
 }
+
+func GetOrderHistory(userId uint, db *gorm.DB) ([]entity.Orders, error) {
+	order := []entity.Orders{}
+
+	err := db.Where("user_id = ?", userId).Find(&order).Error
+
+	return order, err
+}
+
+func TopUpSaldo(userId uint, nominal int, db *gorm.DB) (*entity.Users, *gorm.DB) {
+	user := entity.Users{}
+
+	result := db.Where("id = ?", userId).First(&user)
+	if result.Error != nil {
+		return &user, result
+	}
+
+	user.Saldo = user.Saldo + nominal
+	result = db.Save(&user)
+
+	return &user, result
+}

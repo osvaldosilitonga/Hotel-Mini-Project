@@ -73,6 +73,15 @@ definitions:
       updated_at:
         type: string
     type: object
+  dto.OrderHistoryResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.OrderData'
+        type: array
+      message:
+        type: string
+    type: object
   dto.RegisterBody:
     properties:
       email:
@@ -99,6 +108,21 @@ definitions:
         items:
           $ref: '#/definitions/entity.Rooms'
         type: array
+      message:
+        type: string
+    type: object
+  dto.TopUpBody:
+    properties:
+      nominal:
+        minimum: 50000
+        type: integer
+    required:
+    - nominal
+    type: object
+  dto.TopUpResponse:
+    properties:
+      data:
+        $ref: '#/definitions/entity.Users'
       message:
         type: string
     type: object
@@ -279,6 +303,48 @@ paths:
     get:
       consumes:
       - application/json
+      description: get user order by giving order id in request param
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Order ID
+        in: path
+        name: OrderID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserOrderByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Get User Order
+      tags:
+      - User
+  /user/orders/cancel/:id:
+    put:
+      consumes:
+      - application/json
       description: cancel user order by giving order id in request param
       parameters:
       - description: JWT Token
@@ -315,6 +381,78 @@ paths:
           schema:
             $ref: '#/definitions/helpers.APIError'
       summary: Cancel User Order
+      tags:
+      - User
+  /user/orders/history:
+    get:
+      consumes:
+      - application/json
+      description: get all user order history
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OrderHistoryResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Order History
+      tags:
+      - User
+  /user/payments/topup:
+    put:
+      consumes:
+      - application/json
+      description: top up balance by giving nominal in request body
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Top Up Nominal
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TopUpBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TopUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Top Up Balance
       tags:
       - User
 securityDefinitions:
