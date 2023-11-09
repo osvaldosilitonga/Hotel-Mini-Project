@@ -73,3 +73,12 @@ type OrderData struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type MailData struct {
+	Name    string
+	Email   string
+	Nominal int
+	Saldo   int
+	Status  string
+	Date    time.Time
+}

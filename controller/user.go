@@ -4,6 +4,7 @@ import (
 	"errors"
 	"hotel/dto"
 	"hotel/entity"
+	"hotel/handler"
 	"hotel/helpers"
 	"hotel/repository"
 	"net/http"
@@ -266,6 +267,17 @@ func (controller User) UserTopUp(c echo.Context) error {
 		Message: "top up success",
 		Data:    *user,
 	}
+
+	mailData := dto.MailData{
+		Name:    user.Name,
+		Email:   user.Email,
+		Nominal: body.Nominal,
+		Saldo:   user.Saldo,
+		Status:  "Success",
+		Date:    time.Now(),
+	}
+
+	handler.SendMail(mailData)
 
 	return c.JSON(http.StatusOK, response)
 }
