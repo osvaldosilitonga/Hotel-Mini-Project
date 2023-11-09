@@ -50,6 +50,7 @@ func main() {
 		v1.POST("/login", userController.LoginUser)
 		v1.POST("/register", userController.RegisterUser)
 		v1.GET("/rooms", userController.GetRooms)
+		v1.POST("/payments/api/xendit/webhook", userController.XenditProcessWebHook)
 	}
 	user := v1.Group("/user")
 	user.Use(authMiddleware.RequiredAuth)
@@ -61,6 +62,8 @@ func main() {
 
 		user.PUT("/payments/topup", userController.UserTopUp)
 		user.POST("/payments/process/wallet/:id", userController.PaymentWallet)
+
+		user.POST("/payments/api/xendit/:id", userController.XenditPayment)
 	}
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))

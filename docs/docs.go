@@ -387,6 +387,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/payments/api/xendit/:id": {
+            "post": {
+                "description": "payment using xendit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Xendit Payment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Order ID",
+                        "name": "OrderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.XenditPaymentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/user/payments/process/wallet/:id": {
             "post": {
                 "description": "payment using user wallet",
@@ -529,6 +592,32 @@ const docTemplate = `{
                     "$ref": "#/definitions/dto.OrderData"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.InvoiceResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "expairy_date": {
+                    "type": "string"
+                },
+                "external_id": {
+                    "type": "string"
+                },
+                "invoice_url": {
+                    "type": "string"
+                },
+                "payer_email": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -718,6 +807,17 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/dto.OrderData"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.XenditPaymentResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.InvoiceResponse"
                 },
                 "message": {
                     "type": "string"
