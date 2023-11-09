@@ -210,6 +210,63 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/orders/:id": {
+            "get": {
+                "description": "get user order by giving order id in request param",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Order ID",
+                        "name": "OrderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserOrderByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -217,7 +274,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/dto.NewOrder"
+                    "$ref": "#/definitions/dto.OrderData"
                 },
                 "message": {
                     "type": "string"
@@ -250,7 +307,34 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.NewOrder": {
+        "dto.OrderBody": {
+            "type": "object",
+            "required": [
+                "adult",
+                "check_in",
+                "check_out",
+                "room_id"
+            ],
+            "properties": {
+                "adult": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "check_in": {
+                    "type": "string"
+                },
+                "check_out": {
+                    "type": "string"
+                },
+                "child": {
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrderData": {
             "type": "object",
             "properties": {
                 "adult": {
@@ -282,33 +366,6 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
-                }
-            }
-        },
-        "dto.OrderBody": {
-            "type": "object",
-            "required": [
-                "adult",
-                "check_in",
-                "check_out",
-                "room_id"
-            ],
-            "properties": {
-                "adult": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "check_in": {
-                    "type": "string"
-                },
-                "check_out": {
-                    "type": "string"
-                },
-                "child": {
-                    "type": "integer"
-                },
-                "room_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -350,6 +407,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/entity.Rooms"
                     }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserOrderByIdResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.OrderData"
                 },
                 "message": {
                     "type": "string"

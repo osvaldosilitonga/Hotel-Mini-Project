@@ -216,7 +216,7 @@ func (controller User) CreateOrder(c echo.Context) error {
 
 	tx.Commit()
 
-	data := dto.NewOrder{
+	data := dto.OrderData{
 		ID:        order.ID,
 		RoomID:    order.RoomID,
 		Adult:     order.Adult,

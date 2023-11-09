@@ -55,6 +55,7 @@ func main() {
 	user.Use(authMiddleware.RequiredAuth)
 	{
 		user.POST("/orders", userController.CreateOrder)
+		user.GET("/orders/:id", userController.GetUserOrderById)
 	}
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("LOCAL_PORT")))

@@ -61,3 +61,10 @@ func CreateOrder(data entity.Orders, db *gorm.DB) (entity.Orders, error) {
 	err := db.Preload("Payments").Create(&data).Error
 	return data, err
 }
+
+func GetUserOrderById(userId uint, orderId int, db *gorm.DB) (*entity.Orders, error) {
+	order := entity.Orders{}
+	err := db.Preload("Payments").Where("user_id = ? AND id = ?", userId, orderId).First(&order).Error
+
+	return &order, err
+}

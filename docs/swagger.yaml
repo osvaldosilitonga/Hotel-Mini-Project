@@ -3,7 +3,7 @@ definitions:
   dto.CreateOrderResponse:
     properties:
       data:
-        $ref: '#/definitions/dto.NewOrder'
+        $ref: '#/definitions/dto.OrderData'
       message:
         type: string
     type: object
@@ -24,7 +24,26 @@ definitions:
       message:
         type: string
     type: object
-  dto.NewOrder:
+  dto.OrderBody:
+    properties:
+      adult:
+        minimum: 1
+        type: integer
+      check_in:
+        type: string
+      check_out:
+        type: string
+      child:
+        type: integer
+      room_id:
+        type: integer
+    required:
+    - adult
+    - check_in
+    - check_out
+    - room_id
+    type: object
+  dto.OrderData:
     properties:
       adult:
         type: integer
@@ -46,25 +65,6 @@ definitions:
         type: string
       updated_at:
         type: string
-    type: object
-  dto.OrderBody:
-    properties:
-      adult:
-        minimum: 1
-        type: integer
-      check_in:
-        type: string
-      check_out:
-        type: string
-      child:
-        type: integer
-      room_id:
-        type: integer
-    required:
-    - adult
-    - check_in
-    - check_out
-    - room_id
     type: object
   dto.RegisterBody:
     properties:
@@ -92,6 +92,13 @@ definitions:
         items:
           $ref: '#/definitions/entity.Rooms'
         type: array
+      message:
+        type: string
+    type: object
+  dto.UserOrderByIdResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.OrderData'
       message:
         type: string
     type: object
@@ -259,6 +266,44 @@ paths:
           schema:
             $ref: '#/definitions/helpers.APIError'
       summary: Create Order
+      tags:
+      - User
+  /user/orders/:id:
+    get:
+      consumes:
+      - application/json
+      description: get user order by giving order id in request param
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Order ID
+        in: path
+        name: OrderID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserOrderByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Get User Order
       tags:
       - User
 securityDefinitions:

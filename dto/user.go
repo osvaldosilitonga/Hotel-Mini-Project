@@ -37,12 +37,16 @@ type RoomsResponse struct {
 	Data    []entity.Rooms `json:"data"`
 }
 type CreateOrderResponse struct {
-	Message string   `json:"message"`
-	Data    NewOrder `json:"data"`
+	Message string    `json:"message"`
+	Data    OrderData `json:"data"`
+}
+type UserOrderByIdResponse struct {
+	Message string    `json:"message"`
+	Data    OrderData `json:"data"`
 }
 
 // New Data Format
-type NewOrder struct {
+type OrderData struct {
 	ID        uint      `json:"order_id"`
 	RoomID    uint      `json:"room_id"`
 	Adult     int       `json:"adult"`
