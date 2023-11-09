@@ -59,6 +59,10 @@ type TopUpResponse struct {
 	Message string       `json:"message"`
 	Data    entity.Users `json:"data"`
 }
+type PaymentResponse struct {
+	Message string    `json:"message"`
+	Data    OrderData `json:"data"`
+}
 
 // New Data Format
 type OrderData struct {

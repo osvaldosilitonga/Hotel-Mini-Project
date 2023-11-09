@@ -82,6 +82,13 @@ definitions:
       message:
         type: string
     type: object
+  dto.PaymentResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.OrderData'
+      message:
+        type: string
+    type: object
   dto.RegisterBody:
     properties:
       email:
@@ -414,6 +421,48 @@ paths:
           schema:
             $ref: '#/definitions/helpers.APIError'
       summary: Order History
+      tags:
+      - User
+  /user/payments/process/wallet/:id:
+    post:
+      consumes:
+      - application/json
+      description: payment using user wallet
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Order ID
+        in: path
+        name: OrderID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+      summary: Wallet Pay
       tags:
       - User
   /user/payments/topup:
