@@ -68,3 +68,19 @@ func GetUserOrderById(userId uint, orderId int, db *gorm.DB) (*entity.Orders, er
 
 	return &order, err
 }
+
+func CancelUserOrder(userId uint, orderId int, db *gorm.DB) (*entity.Orders, *gorm.DB) {
+	order := entity.Orders{}
+
+	result := db.Preload("Payments").Where("id = ? AND user_id = ?", orderId, userId).First(&order)
+	if result.Error != nil {
+		return &order, result
+	}
+
+	order.Status = "cancel"
+	order.Payments.Status = "cancel"
+
+	result = db.Save(&order)
+
+	return &order, result
+}

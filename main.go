@@ -56,7 +56,8 @@ func main() {
 	{
 		user.POST("/orders", userController.CreateOrder)
 		user.GET("/orders/:id", userController.GetUserOrderById)
+		user.PUT("/orders/cancel/:id", userController.CancelUserOrder)
 	}
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("LOCAL_PORT")))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }

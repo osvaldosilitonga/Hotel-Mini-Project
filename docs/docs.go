@@ -213,7 +213,7 @@ const docTemplate = `{
         },
         "/user/orders/:id": {
             "get": {
-                "description": "get user order by giving order id in request param",
+                "description": "cancel user order by giving order id in request param",
                 "consumes": [
                     "application/json"
                 ],
@@ -223,7 +223,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Get User Order",
+                "summary": "Cancel User Order",
                 "parameters": [
                     {
                         "type": "string",
@@ -244,11 +244,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserOrderByIdResponse"
+                            "$ref": "#/definitions/dto.CancelOrderResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.APIError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/helpers.APIError"
                         }
@@ -270,6 +276,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CancelOrderResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.OrderData"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.CreateOrderResponse": {
             "type": "object",
             "properties": {

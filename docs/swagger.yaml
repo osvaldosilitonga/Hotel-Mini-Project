@@ -1,5 +1,12 @@
 basePath: /v1
 definitions:
+  dto.CancelOrderResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.OrderData'
+      message:
+        type: string
+    type: object
   dto.CreateOrderResponse:
     properties:
       data:
@@ -272,7 +279,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get user order by giving order id in request param
+      description: cancel user order by giving order id in request param
       parameters:
       - description: JWT Token
         in: header
@@ -290,9 +297,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.UserOrderByIdResponse'
+            $ref: '#/definitions/dto.CancelOrderResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.APIError'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/helpers.APIError'
         "404":
@@ -303,7 +314,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/helpers.APIError'
-      summary: Get User Order
+      summary: Cancel User Order
       tags:
       - User
 securityDefinitions:

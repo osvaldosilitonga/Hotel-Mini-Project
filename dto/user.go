@@ -44,6 +44,10 @@ type UserOrderByIdResponse struct {
 	Message string    `json:"message"`
 	Data    OrderData `json:"data"`
 }
+type CancelOrderResponse struct {
+	Message string    `json:"message"`
+	Data    OrderData `json:"data"`
+}
 
 // New Data Format
 type OrderData struct {

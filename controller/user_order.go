@@ -22,6 +22,7 @@ import (
 // @Param        OrderID   path      int  true "Order ID"
 // @Success      200  {object}  dto.UserOrderByIdResponse
 // @Failure      400  {object}  helpers.APIError
+// @Failure      401  {object}  helpers.APIError
 // @Failure      404  {object}  helpers.APIError
 // @Failure      500  {object}  helpers.APIError
 // @Router       /user/orders/:id [get]
@@ -57,6 +58,59 @@ func (controller User) GetUserOrderById(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, dto.UserOrderByIdResponse{
 		Message: "ok",
+		Data:    data,
+	})
+}
+
+// CancelUserOrder godoc
+// @Summary      Cancel User Order
+// @Description  cancel user order by giving order id in request param
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "JWT Token"
+// @Param        OrderID   path      int  true "Order ID"
+// @Success      200  {object}  dto.CancelOrderResponse
+// @Failure      400  {object}  helpers.APIError
+// @Failure      401  {object}  helpers.APIError
+// @Failure      404  {object}  helpers.APIError
+// @Failure      500  {object}  helpers.APIError
+// @Router       /user/orders/:id [get]
+func (controller User) CancelUserOrder(c echo.Context) error {
+	userId := c.Get("id")
+
+	param := c.Param("id")
+	orderId, err := strconv.Atoi(param)
+	if err != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, "id must be number")
+	}
+
+	order, res := repository.CancelUserOrder(userId.(uint), orderId, controller.DB)
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return helpers.ErrorMessage(c, &helpers.ErrNotFound, "order id not found")
+	}
+	if res.RowsAffected < 1 {
+		return helpers.ErrorMessage(c, &helpers.ErrBadRequest, "no rows affected")
+	}
+	if res.Error != nil {
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, res.Error.Error())
+	}
+
+	data := dto.OrderData{
+		ID:        order.ID,
+		RoomID:    order.RoomID,
+		Adult:     order.Adult,
+		Child:     order.Child,
+		CheckIn:   order.CheckIn,
+		CheckOut:  order.CheckOut,
+		Status:    order.Status,
+		Amount:    order.Payments.Amount,
+		CreatedAt: order.CreatedAt,
+		UpdatedAt: order.UpdatedAt,
+	}
+
+	return c.JSON(http.StatusOK, dto.CancelOrderResponse{
+		Message: "cancel success",
 		Data:    data,
 	})
 }
