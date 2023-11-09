@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"hotel/dto"
 	"hotel/entity"
 	"time"
 )
@@ -65,8 +64,8 @@ type PaymentResponse struct {
 	Data    OrderData `json:"data"`
 }
 type XenditPaymentResponse struct {
-	Message string              `json:"message"`
-	Data    dto.InvoiceResponse `json:"data"`
+	Message string           `json:"message"`
+	Data    *InvoiceResponse `json:"data"`
 }
 
 // New Data Format

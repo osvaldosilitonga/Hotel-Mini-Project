@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"hotel/config"
 	"hotel/controller"
 	"hotel/initializers"
@@ -66,5 +67,6 @@ func main() {
 		user.POST("/payments/api/xendit/:id", userController.XenditPayment)
 	}
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+	// e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))))
 }
