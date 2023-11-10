@@ -74,30 +74,41 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 
 	cbToken := c.Request().Header.Get("x-callback-token")
 	if cbToken != os.Getenv("XENDIT_WEBHOOK_VERIFICATION_TOKEN") {
-		return c.JSON(http.StatusInternalServerError, echo.Map{})
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "token validation error",
+		})
 	}
 
 	body := dto.XenditCallbackBody{}
-	c.Bind(&body)
-	if err := c.Validate(&body); err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{})
+	if err := c.Bind(&body); err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "binding body error",
+		})
 	}
+	// if err := c.Validate(&body); err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, echo.Map{})
+	// }
 
 	if strings.ToLower(body.Status) != "paid" {
-		return c.JSON(http.StatusInternalServerError, echo.Map{})
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "status not paid",
+		})
 	}
 
 	externalId := body.ExternalID
 	e, err := strconv.Atoi(externalId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{})
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "external id error",
+		})
 	}
 
 	dateString := body.PaidAt
 	paidAt, error := time.Parse("2006-01-02", dateString)
-
 	if error != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{})
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "convert paidAt string to time",
+		})
 	}
 
 	tx := controller.DB.Begin()
@@ -105,7 +116,9 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 	order, err := repository.GetOrderById(e, tx)
 	if err != nil {
 		tx.Rollback()
-		return c.JSON(http.StatusInternalServerError, echo.Map{})
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": "get order by id error",
+		})
 	}
 
 	order.Status = body.Status
@@ -119,7 +132,9 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 	o = *order
 	if err := tx.Save(&o).Error; err != nil {
 		tx.Rollback()
-		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, err)
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, echo.Map{
+			"message": "db transaction error",
+		})
 	}
 
 	// update payment - method(PaymentMetho), status(paid), updated_at(PaidAt)
@@ -127,7 +142,9 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 	p = order.Payments
 	if err := tx.Save(&p).Error; err != nil {
 		tx.Rollback()
-		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, err)
+		return helpers.ErrorMessage(c, &helpers.ErrInternalServer, echo.Map{
+			"message": "db transaction error",
+		})
 	}
 
 	tx.Commit()
