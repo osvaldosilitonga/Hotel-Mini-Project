@@ -103,13 +103,13 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 		})
 	}
 
-	dateString := body.PaidAt
-	paidAt, error := time.Parse("2006-01-02", dateString)
-	if error != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"message": "convert paidAt string to time",
-		})
-	}
+	// dateString := body.PaidAt
+	// paidAt, error := time.Parse("2006-01-02", dateString)
+	// if error != nil {
+	// 	return c.JSON(http.StatusInternalServerError, echo.Map{
+	// 		"message": "convert paidAt string to time",
+	// 	})
+	// }
 
 	tx := controller.DB.Begin()
 	// get orders by id
@@ -125,7 +125,7 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 	order.UpdatedAt = time.Now()
 	order.Payments.Method = body.PaymentMethod
 	order.Payments.Status = body.Status
-	order.Payments.UpdatedAt = paidAt
+	order.Payments.UpdatedAt = time.Now()
 
 	// update orders - status(paid), updated_at(now)
 	o := entity.Orders{}
