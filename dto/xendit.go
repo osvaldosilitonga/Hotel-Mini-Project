@@ -20,19 +20,19 @@ type InvoiceResponse struct {
 }
 
 type XenditCallbackBody struct {
-	ID                 string `json:"id" validate:"required"`
-	ExternalID         string `json:"external_id" validate:"required"`
-	UserID             string `json:"user_id" validate:"required"`
-	PaymentMethod      string `json:"payment_method" validate:"required"`
-	Status             string `json:"status" validate:"required"`
+	ID                 string `json:"id"`
+	ExternalID         string `json:"external_id"`
+	UserID             string `json:"user_id"`
+	PaymentMethod      string `json:"payment_method"`
+	Status             string `json:"status"`
 	MerchantName       string `json:"merchant_name"`
-	Amount             int    `json:"amount" validate:"required"`
-	PaidAmount         int    `json:"paid_amount" validate:"required"`
-	BankCode           string `json:"bank_code" validate:"required"`
-	PaidAt             string `json:"paid_at" validate:"required"`
-	PayerEmail         string `json:"payer_emal" validate:"required"`
-	Description        string `json:"description" validate:"required"`
-	Currency           string `json:"currency" validate:"required"`
-	PaymentChannel     string `json:"payment_channel" validate:"required"`
+	Amount             int    `json:"amount"`
+	PaidAmount         int    `json:"paid_amount"`
+	BankCode           string `json:"bank_code"`
+	PaidAt             string `json:"paid_at"`
+	PayerEmail         string `json:"payer_email"`
+	Description        string `json:"description"`
+	Currency           string `json:"currency"`
+	PaymentChannel     string `json:"payment_channel"`
 	PaymentDestination string `json:"payment_destination"`
 }

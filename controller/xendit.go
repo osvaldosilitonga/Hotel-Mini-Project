@@ -78,10 +78,12 @@ func (controller User) XenditProcessWebHook(c echo.Context) error {
 	}
 
 	body := dto.XenditCallbackBody{}
-	c.Bind(&body)
-	if err := c.Validate(&body); err != nil {
+	if err := c.Bind(&body); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{})
 	}
+	// if err := c.Validate(&body); err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, echo.Map{})
+	// }
 
 	if strings.ToLower(body.Status) != "paid" {
 		return c.JSON(http.StatusInternalServerError, echo.Map{})
