@@ -44,7 +44,7 @@ func main() {
 	authMiddleware := middlewares.NewAuthMiddleware(db)
 	userController := controller.NewUserController(db)
 
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/swagger/*.html", echoSwagger.WrapHandler)
 
 	v1 := e.Group("/v1")
 	{
